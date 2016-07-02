@@ -15,6 +15,7 @@
 int RECV_PIN = 11;
 
 IRrecv irrecv(RECV_PIN);
+IRsend irsend;
 
 decode_results results;
 
@@ -25,8 +26,14 @@ void setup()
 }
 
 void loop() {
-  if (irrecv.decode(&results)) {
-    Serial.println(results.value, HEX);
-    irrecv.resume(); // Receive the next value
-  }
+    if (irrecv.decode(&results)) {
+        Serial.print("Received: "); Serial.println(results.value, HEX);
+        
+        irsend.sendNEC(results.value, 32); // send on A5
+        Serial.print("Sending: "); Serial.println(results.value, HEX); Serial.println();
+        
+        
+        irrecv.enableIRIn(); // Start the receiver
+        irrecv.resume(); // Receive the next value
+    }
 }
